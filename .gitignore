@@ -1,0 +1,6 @@
+fire/test/fire/*
+fire/test/no-fire/*
+fire/train/fire/*
+fire/train/no-fire/*
+fire/valid/fire/*
+fire/valid/no-fire/*
