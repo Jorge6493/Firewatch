@@ -11,3 +11,5 @@ fire-old/train/fire/*
 fire-old/train/no-fire/*
 fire-old/valid/fire/*
 fire-old/valid/no-fire/*
+
+fire/datasetviejo/*
