@@ -67,9 +67,9 @@ model = Sequential([
 
 model.summary()
 
-model.compile(optimizer=Adam(learning_rate=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer=Adam(learning_rate=0.1), loss='categorical_crossentropy', metrics=['accuracy'])
 
-model.fit(x=train_batches, validation_data=valid_batches, epochs=10, verbose=2, steps_per_epoch=stepsPerEpoch, validation_steps=validationSteps)
+model.fit(x=train_batches, validation_data=valid_batches, epochs=20, verbose=2, steps_per_epoch=stepsPerEpoch, validation_steps=validationSteps)
 
 # test_imgs, test_labels = next(test_batches)
 # plotImages(test_imgs)
