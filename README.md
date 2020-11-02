@@ -4,7 +4,7 @@ Aplicación en desarrollo que tiene como proposito entrenar modelo DCNN (Deep Co
 
 ## Stack
 
-Python
+Python, utilizando las librerias de TensorFlow
 
 ## To run:
 
