@@ -14,4 +14,4 @@ Para correr esta aplicación se necesita instalar ambiente de trabajo en Linux, 
 
 luego
 
-## `python3 train.py o train2.py`
+## `python3 train.py`
