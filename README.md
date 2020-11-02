@@ -10,8 +10,8 @@ Python
 
 Para correr esta aplicación se necesita instalar ambiente de trabajo en Linux, con Python, TensorFlow, pip, matplotlib, entre otros componentes. En caso de tener ambiente: 
 
-## workon virtualenvironmentname
+## `workon virtualenvironmentname`
 
 luego
 
-## python3 train.py o train2.py
+## `python3 train.py o train2.py`
