@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.models import Sequential
+from keras.models import model_from_json
 from tensorflow.keras.layers import Activation, Dense, Flatten, Conv2D, MaxPool2D, Dropout
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import categorical_crossentropy
@@ -50,4 +51,25 @@ Dense(2, activation='softmax')])
 model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.0001), metrics=['accuracy'])
 
 history = model.fit(train_generator, steps_per_epoch = 15, epochs = 50, validation_data = validation_generator, validation_steps = 15)
+score = model.evaluate(X, Y, verbose=0)
+print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 
+model_json = model.to_json()
+with open("model.json", "w") as json_file:
+	json_file.write(model_json)
+
+model.save_weights("model.h5")
+print("Saved model.")
+
+#load .json and create model
+json_file = open('model.json', 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+loaded_model = model_from_json(loaded_model_json)
+
+loaded_model.load_weights("model.h5")
+print("Loaded model.")
+
+loaded_model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.0001), metrics=['accuracy'])
+score = loaded_model.evaluate(X, Y, verbose=0)
+print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1]*100))
