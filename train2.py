@@ -32,7 +32,9 @@ train_generator = training_datagen.flow_from_directory(directory=train_path, tar
 validation_generator = validation_datagen.flow_from_directory(directory=valid_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', batch_size= 16)
 
 
-from tensorflow.keras.optimizers import Adam
+
+
+
 model = Sequential([
 Conv2D(filters=96, kernel_size=(11, 11), strides=(4,4), activation='relu', input_shape=(224,224,3)), 
 MaxPool2D(pool_size=(3,3), strides=(2,2)), 
@@ -51,8 +53,8 @@ Dense(2, activation='softmax')])
 model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.0001), metrics=['accuracy'])
 
 history = model.fit(train_generator, steps_per_epoch = 15, epochs = 50, validation_data = validation_generator, validation_steps = 15)
-score = model.evaluate(X, Y, verbose=0)
-print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+#score = model.evaluate(history, Y, verbose=0)
+#print("%s: %.2f%%" % (model.metrics_names[1], score[1]*100))
 
 model_json = model.to_json()
 with open("model.json", "w") as json_file:
@@ -71,5 +73,5 @@ loaded_model.load_weights("model.h5")
 print("Loaded model.")
 
 loaded_model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.0001), metrics=['accuracy'])
-score = loaded_model.evaluate(X, Y, verbose=0)
-print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1]*100))
+#score = loaded_model.evaluate(X, Y, verbose=0)
+#print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1]*100))
