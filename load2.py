@@ -11,7 +11,9 @@ import itertools
 test_path = 'fire/test'
 
 test_datagen = ImageDataGenerator(rescale = 1./255)
-test_batches = test_datagen.flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', batch_size= 16)
+test_batches = test_datagen.flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', batch_size= 8)
+
+testSteps = test_batches.n/8
 
 #load .json and create model
 json_file = open('model.json', 'r')
@@ -40,7 +42,7 @@ print("Loaded model.")
 
 class_names = ['fire', 'no-fire']
 
-predictions = loaded_model.predict(test_batches)
+predictions = loaded_model.predict(test_batches, steps = testSteps)
 # n = 0
 for i in predictions:
     # n = n+1
