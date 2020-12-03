@@ -42,7 +42,7 @@ print("Loaded model.")
 
 class_names = ['fire', 'no-fire']
 
-predictions = loaded_model.predict(test_batches, steps = testSteps)
+predictions = loaded_model.predict(x = test_batches, verbose = 0, steps = testSteps)
 # n = 0
 for i in predictions:
     # n = n+1
