@@ -31,7 +31,8 @@ train_generator = training_datagen.flow_from_directory(directory=train_path, tar
 
 validation_generator = validation_datagen.flow_from_directory(directory=valid_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', batch_size= 16)
 
-
+trainingSteps = train_generator.n/64
+validationSteps = validation_generator.n/16
 
 
 
@@ -52,7 +53,7 @@ Dense(2, activation='softmax')])
 
 model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.0001), metrics=['accuracy'])
 
-history = model.fit(train_generator, steps_per_epoch = 15, epochs = 50, validation_data = validation_generator, validation_steps = 15)
+history = model.fit(train_generator, steps_per_epoch = trainingSteps, epochs = 50, validation_data = validation_generator, validation_steps = validationSteps)
 #score = model.evaluate(history, Y, verbose=0)
 #print("%s: %.2f%%" % (model.metrics_names[1], score[1]*100))
 
