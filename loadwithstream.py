@@ -13,9 +13,8 @@ import pathlib
 
 # @app.route('/')
 # def index():
+#     return render_template('index.html')
 #     return "Hello World"
-
-
 
 
 #load .json and create model
@@ -42,38 +41,34 @@ print('FPS:', fps)
 # if __name__ == "__main__":
 #     app.run(debug=True)
 
-
-
 while(True):
-    # read one frame
-    ret, frame = cap.read()
+        # read one frame
+        ret, frame = cap.read()
 
-    # TODO: perform frame processing here
-    img_height = 224
-    img_width = 224
-    frame = cv2.resize(frame, (img_height, img_width))
-    # frame = cv2.flip(frame,0) 
-    # img = keras.preprocessing.image.load_img(
-    # frame, target_size=(img_height, img_width)
-    # )
-    img_array = keras.preprocessing.image.img_to_array(frame)
-    img_array = tf.expand_dims(img_array, 0) # Create a batch
+        # TODO: perform frame processing here
+        img_height = 224
+        img_width = 224
+        frame = cv2.resize(frame, (img_height, img_width))
+        # frame = cv2.flip(frame,0) 
+        # img = keras.preprocessing.image.load_img(
+        # frame, target_size=(img_height, img_width)
+        # )
+        img_array = keras.preprocessing.image.img_to_array(frame)
+        img_array = tf.expand_dims(img_array, 0) # Create a batch
 
-    predictions = loaded_model.predict(img_array)
-    score = tf.nn.softmax(predictions[0])
+        predictions = loaded_model.predict(img_array)
+        score = tf.nn.softmax(predictions[0])
 
-    class_names = ['fire', 'no-fire']
+        class_names = ['fire', 'no-fire']
 
-    print(
-    "This image most likely belongs to {} with a {:.2f} percent confidence."
-    .format(class_names[np.argmax(score)], 100 * np.max(score))
-    )
+        print(
+        "This image most likely belongs to {} with a {:.2f} percent confidence."
+        .format(class_names[np.argmax(score)], 100 * np.max(score))
+        )
 
-    # display frame
-    cv2.imshow('frame',frame)
-    if cv2.waitKey(wait_ms) & 0xFF == ord('q'):
-        break
-
-
+        # display frame
+        cv2.imshow('frame',frame)
+        if cv2.waitKey(wait_ms) & 0xFF == ord('q'):
+            break
 
 # cv2.destroyAllWindows()

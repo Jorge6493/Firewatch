@@ -17,6 +17,7 @@ print('FPS:', fps)
 while(True):
     # read one frame
     ret, frame = cap.read()
+    frame = cv2.flip(frame,0)
 
     # TODO: perform frame processing here
 
