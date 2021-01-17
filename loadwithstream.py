@@ -7,41 +7,23 @@ import numpy as np
 import pathlib
 # import keyboard
 
-# from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, jsonify
+from flask_cors import CORS
 
-# app = Flask(__name__)
+app = Flask(__name__)
+CORS(app)
 
-# @app.route('/')
-# def index():
-#     return render_template('index.html')
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 #     return "Hello World"
 
-
-#load .json and create model
-json_file = open('model.json', 'r')
-loaded_model_json = json_file.read()
-json_file.close()
-loaded_model = model_from_json(loaded_model_json)
-
-loaded_model.load_weights("model.h5")
-print("Loaded model.")
-
-VIDEO_URL = "http://192.168.1.131:8080/camera/livestream.m3u8"
-
-cap = cv2.VideoCapture(VIDEO_URL)
-if (cap.isOpened() == False):
-    print('!!! Unable to open URL')
-    sys.exit(-1)
-
-# retrieve FPS and calculate how long to wait between each frame to be display
-fps = cap.get(cv2.CAP_PROP_FPS)
-wait_ms = int(1000/fps)
-print('FPS:', fps)
-
-# if __name__ == "__main__":
-#     app.run(debug=True)
-
-while(True):
+@app.route('/status',methods = ['POST', 'GET'])
+def status():
+    if request.method == 'GET':
+        # while(True):
         # read one frame
         ret, frame = cap.read()
 
@@ -61,14 +43,43 @@ while(True):
 
         class_names = ['fire', 'no-fire']
 
-        print(
-        "This image most likely belongs to {} with a {:.2f} percent confidence."
-        .format(class_names[np.argmax(score)], 100 * np.max(score))
-        )
+        # print(
+        # "This image most likely belongs to {} with a {:.2f} percent confidence."
+        # .format(class_names[np.argmax(score)], 100 * np.max(score))
+        # )
+        
+        label = class_names[np.argmax(score)]
 
         # display frame
-        cv2.imshow('frame',frame)
-        if cv2.waitKey(wait_ms) & 0xFF == ord('q'):
-            break
+        # cv2.imshow('frame',frame)
+        # if cv2.waitKey(wait_ms) & 0xFF == ord('q'):
+        #     break
 
-# cv2.destroyAllWindows()
+        # cv2.destroyAllWindows()
+        return jsonify(label)
+        # return label
+
+
+if __name__ == "__main__":
+    #load .json and create model
+    json_file = open('model.json', 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    loaded_model = model_from_json(loaded_model_json)
+
+    loaded_model.load_weights("model.h5")
+    print("Loaded model.")
+
+    VIDEO_URL = "http://192.168.1.131:8080/camera/livestream.m3u8"
+
+    cap = cv2.VideoCapture(VIDEO_URL)
+    if (cap.isOpened() == False):
+        print('!!! Unable to open URL')
+        sys.exit(-1)
+
+    # retrieve FPS and calculate how long to wait between each frame to be display
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    wait_ms = int(1000/fps)
+    print('FPS:', fps)
+    app.run(debug=True)
+

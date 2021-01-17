@@ -19,6 +19,15 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 #workon dl4cv
 
+checkpoint_path = "training_1/cp.ckpt"
+checkpoint_dir = os.path.dirname(checkpoint_path)
+
+# Create a callback that saves the model's weights
+cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                 save_weights_only=True,
+                                                 verbose=1)
+
+
 train_path = 'fire/train'
 valid_path = 'fire/valid'
 test_path = 'fire/test'
@@ -53,7 +62,7 @@ Dense(2, activation='softmax')])
 
 model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.0001), metrics=['accuracy'])
 
-history = model.fit(train_generator, steps_per_epoch = trainingSteps, epochs = 50, validation_data = validation_generator, validation_steps = validationSteps)
+history = model.fit(train_generator, steps_per_epoch = trainingSteps, epochs = 50, validation_data = validation_generator, validation_steps = validationSteps, callbacks=[cp_callback])
 #score = model.evaluate(history, Y, verbose=0)
 #print("%s: %.2f%%" % (model.metrics_names[1], score[1]*100))
 

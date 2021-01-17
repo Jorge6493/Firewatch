@@ -2,13 +2,33 @@
 
 {% block head %}
 <title>Index</title>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<!-- <script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script> -->
+<script type=text/javascript>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
 {% endblock %}
 
 {% block body %}
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <!-- Or if you want a more recent canary version -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/hls.js@canary"></script> -->
-<video id="video" controls></video>
+<video id="video" width="320" height="240" controls></video>
+<h2 id="label"> </h2>
+<script type=text/javascript>
+  $(function() {
+    while (true) {
+    // $('h2#label').bind('click', function() {
+      $.getJSON($SCRIPT_ROOT + '/status', {
+      }, function(data) {
+        $("h2#label").text(data);
+        console.log(data)
+      });
+      return false;
+    // });
+    }
+  });
+</script>
 <script>
   var video = document.getElementById('video');
   if(Hls.isSupported()) {
@@ -33,4 +53,30 @@
     });
   }
 </script>
+<script>
+  function httpGetAsync(theUrl, callback)
+  {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.send(null);
+  }
+
+  // var label = document.getElementById('label');
+
+  // while (true){
+  //   setTimeout(() => {  httpGetAsync('http://localhost:5000/status',function(text){
+  //     // console.log(text)
+  //     document.getElementById('label').innerHTML=text
+  //     }) }, 3000);
+    
+  //   }
+
+</script>
+
+
+
 {% endblock %}
