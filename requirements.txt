@@ -1,0 +1,15 @@
+Click
+enum-compat
+enum34
+eventlet
+Flask
+greenlet
+itsdangerous
+Jinja2
+MarkupSafe
+packaging
+python-engineio
+python-socketio
+six
+Werkzeug
+flask_cors
