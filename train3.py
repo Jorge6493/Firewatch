@@ -57,3 +57,23 @@ steps_per_epoch = 14,
 epochs = 10,
 validation_data = validation_generator,
 validation_steps = 14)
+
+model_json = model.to_json()
+with open("model.json", "w") as json_file:
+	json_file.write(model_json)
+
+model.save_weights("model.h5")
+print("Saved model.")
+
+#load .json and create model
+json_file = open('model.json', 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+loaded_model = model_from_json(loaded_model_json)
+
+loaded_model.load_weights("model.h5")
+print("Loaded model.")
+
+loaded_model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.0001), metrics=['accuracy'])
+#score = loaded_model.evaluate(X, Y, verbose=0)
+#print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1]*100))
