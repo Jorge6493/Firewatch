@@ -67,7 +67,7 @@ epochs = 10,
 validation_data = validation_generator,
 validation_steps = 14)
 
-predictions = model.predict(x=test_generator,verbose=0,steps = testSteps)
+predictions = model.predict(x=test_generator,verbose=0,steps = 10)
 
 print('np')
 print(np.round(predictions))
