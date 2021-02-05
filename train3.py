@@ -8,6 +8,12 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Input, Dropout
 
+from sklearn.metrics import confusion_matrix
+import itertools
+import matplotlib.pyplot as plt
+from tensorflow.keras.optimizers import Adam
+import numpy as np
+
 train_path = 'fire/train'
 valid_path = 'fire/valid'
 test_path = 'fire/test'
@@ -20,6 +26,7 @@ train_generator = training_datagen.flow_from_directory(train_path, target_size=(
 validation_generator = validation_datagen.flow_from_directory(valid_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', shuffle = True, batch_size= 14)
 
 test_generator = ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', shuffle=False, batch_size=10)
+testSteps = test_generator.n/8
 
 input_tensor = Input(shape=(224, 224, 3))
 base_model = InceptionV3(input_tensor=input_tensor, weights='imagenet', include_top=False)
@@ -52,14 +59,15 @@ for layer in model.layers[:249]:
 for layer in model.layers[249:]:
   layer.trainable = True
 
-model.compile(optimizer=Adam(lr=0.0001), loss='categorical_crossentropy', metrics=['acc'])history = model.fit(
+model.compile(optimizer=Adam(lr=0.0001), loss='categorical_crossentropy', metrics=['acc'])
+history = model.fit(
 train_generator,
 steps_per_epoch = 14,
 epochs = 10,
 validation_data = validation_generator,
 validation_steps = 14)
 
-predictions = model.predict(x=test_batches,verbose=0,steps = testSteps)
+predictions = model.predict(x=test_generator,verbose=0,steps = testSteps)
 
 print('np')
 print(np.round(predictions))
@@ -100,17 +108,17 @@ def plot_confusion_matrix(cm, classes,
     plt.xlabel('Predicted label')
 
 
-test_batches.class_indices
+test_generator.class_indices
 
 cm_plot_labels = ['fire', 'no-fire']
 plot_confusion_matrix(cm = cm, classes = cm_plot_labels, title = 'Confusion Matrix')
 
-#model_json = model.to_json()
-#with open("model.json", "w") as json_file:
-#	json_file.write(model_json)
+model_json = model.to_json()
+with open("model.json", "w") as json_file:
+	json_file.write(model_json)
 
-#model.save_weights("model.h5")
-#print("Saved model.")
+model.save_weights("model.h5")
+print("Saved model.")
 
 #load .json and create model
 #json_file = open('model.json', 'r')
