@@ -4,6 +4,7 @@
     <title>Flask-SocketIO Test</title>
     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.0/socket.io.js" integrity="sha512-+l9L4lMTFNy3dEglQpprf7jQBhQsQ3/WvOnjaN/+/L4i0jOstgScV0q2TjfvRF4V+ZePMDuZYIQtg5T4MKr+MQ==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function(){
             var socket = io.connect();
@@ -16,7 +17,7 @@
             });
             /////////////////
             socket.on('my_response', function(msg) {
-                $('#log').append('<br>Received: ' + msg.data);
+                $('#log').html('<br>Received: ' + msg.data);
             });
 
             // event handler for server sent data
@@ -54,9 +55,38 @@
             });
         });
     </script>
+    
 </head>
 <body>
     <h1>Flask-SocketIO Test</h1>
+    <video id="video"  controls></video>
+    <script>
+        var video = document.getElementById('video');
+        if(Hls.isSupported()) {
+          var hls = new Hls();
+          hls.loadSource('http://192.168.1.131:8080/camera/livestream.m3u8');
+        // hls.loadSource('http://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8');
+          
+          // hls.loadSource('http://localhost:4000');
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MANIFEST_PARSED,function() {
+            // video.play();
+        });
+       }
+       // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.
+       // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element throught the `src` property.
+       // This is using the built-in support of the plain video element, without using hls.js.
+       // Note: it would be more normal to wait on the 'canplay' event below however on Safari (where you are most likely to find built-in HLS support) the video.src URL must be on the user-driven
+       // white-list before a 'canplay' event will be emitted; the last video event that can be reliably listened-for when the URL is not on the white-list is 'loadedmetadata'.
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = 'http://192.168.1.131:8080/camera/livestream.m3u8';
+        //   video.src = 'http://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8';
+          // video.src = 'http://localhost:4000';
+          video.addEventListener('loadedmetadata',function() {
+            // video.play();
+          });
+        }
+      </script>
     <!-- <h2>Send:</h2>
     <form id="emit" method="POST" action='#'>
         <input type="text" name="emit_data" id="emit_data" placeholder="Message">

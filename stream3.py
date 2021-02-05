@@ -1,9 +1,7 @@
 import cv2
 import sys
 
-
-# VIDEO_URL = "http://192.168.1.131:8080/camera/livestream.m3u8"
-
+VIDEO_URL = "http://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
 
 cap = cv2.VideoCapture(VIDEO_URL)
 if (cap.isOpened() == False):
@@ -18,7 +16,6 @@ print('FPS:', fps)
 while(True):
     # read one frame
     ret, frame = cap.read()
-    # frame = cv2.flip(frame,0)
 
     # TODO: perform frame processing here
 

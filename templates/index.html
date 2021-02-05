@@ -14,21 +14,6 @@
 <!-- Or if you want a more recent canary version -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/hls.js@canary"></script> -->
 <video id="video" width="320" height="240" controls></video>
-<h2 id="label"> </h2>
-<script type=text/javascript>
-  $(function() {
-    while (true) {
-    // $('h2#label').bind('click', function() {
-      $.getJSON($SCRIPT_ROOT + '/status', {
-      }, function(data) {
-        $("h2#label").text(data);
-        console.log(data)
-      });
-      return false;
-    // });
-    }
-  });
-</script>
 <script>
   var video = document.getElementById('video');
   if(Hls.isSupported()) {
@@ -52,7 +37,24 @@
       // video.play();
     });
   }
+  // $("id#video").attr("width","320", "height","240")
 </script>
+<h2 id="label"> </h2>
+<script type=text/javascript>
+  $(function() {
+    while (true) {
+    // $('h2#label').bind('click', function() {
+      $.getJSON($SCRIPT_ROOT + '/status', {
+      }, function(data) {
+        $("h2#label").text(data);
+        console.log(data)
+      });
+      return false;
+    // });
+    }
+  });
+</script>
+
 <script>
   function httpGetAsync(theUrl, callback)
   {
