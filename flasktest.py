@@ -15,7 +15,6 @@ thread = None
 
 
 def background_thread():
-    """Example of how to send server generated events to clients."""
     count = 0
     while True:
         sio.sleep(5)
@@ -28,7 +27,7 @@ def index():
     global thread
     if thread is None:
         thread = sio.start_background_task(background_thread)
-    return render_template('index2.html')
+    return render_template('index.html')
 
 
 # @sio.event

@@ -32,7 +32,6 @@ thread = None
 def background_thread():
     """Example of how to send server generated events to clients."""
     count = 0
-    # time.sleep(10)
     while True:
         # read one frame
         ret, frame = cap.read()
@@ -52,22 +51,8 @@ def background_thread():
         score = tf.nn.softmax(predictions[0])
 
         class_names = ['fire', 'no-fire']
-
-        # print(
-        # "This image most likely belongs to {} with a {:.2f} percent confidence."
-        # .format(class_names[np.argmax(score)], 100 * np.max(score))
-        # )
         
         label = class_names[np.argmax(score)]
-
-        # display frame
-        # cv2.imshow('frame',frame)
-        # if cv2.waitKey(wait_ms) & 0xFF == ord('q'):
-        #     break
-
-        # cv2.destroyAllWindows()
-        # return jsonify(label)
-        # return label
         
         sio.sleep(2)
         count += 1
@@ -82,47 +67,7 @@ def index():
     global thread
     if thread is None:
         thread = sio.start_background_task(background_thread)
-    return render_template('index2.html')
-
-# @app.route('/status',methods = ['POST', 'GET'])
-# def status():
-#     if request.method == 'GET':
-#         # while(True):
-#         # read one frame
-#         ret, frame = cap.read()
-
-#         # TODO: perform frame processing here
-#         img_height = 224
-#         img_width = 224
-#         frame = cv2.resize(frame, (img_height, img_width))
-#         # frame = cv2.flip(frame,0) 
-#         # img = keras.preprocessing.image.load_img(
-#         # frame, target_size=(img_height, img_width)
-#         # )
-#         img_array = keras.preprocessing.image.img_to_array(frame)
-#         img_array = tf.expand_dims(img_array, 0) # Create a batch
-
-#         predictions = loaded_model.predict(img_array)
-#         score = tf.nn.softmax(predictions[0])
-
-#         class_names = ['fire', 'no-fire']
-
-#         # print(
-#         # "This image most likely belongs to {} with a {:.2f} percent confidence."
-#         # .format(class_names[np.argmax(score)], 100 * np.max(score))
-#         # )
-        
-#         label = class_names[np.argmax(score)]
-
-#         # display frame
-#         # cv2.imshow('frame',frame)
-#         # if cv2.waitKey(wait_ms) & 0xFF == ord('q'):
-#         #     break
-
-#         # cv2.destroyAllWindows()
-#         return jsonify(label)
-#         # return label
-
+    return render_template('index.html')
 
 @sio.event
 def my_broadcast_event(sid, message):

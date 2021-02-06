@@ -2,83 +2,67 @@
 
 {% block head %}
 <title>Index</title>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<!-- <script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script> -->
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.0/socket.io.js" integrity="sha512-+l9L4lMTFNy3dEglQpprf7jQBhQsQ3/WvOnjaN/+/L4i0jOstgScV0q2TjfvRF4V+ZePMDuZYIQtg5T4MKr+MQ==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script type=text/javascript>
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function(){
+      var socket = io.connect();
+
+      socket.on('connect', function() {
+          socket.emit('my_event', {data: 'I\'m connected!'});
+      });
+      socket.on('disconnect', function() {
+          $('#log').append('<br>Disconnected');
+      });
+      /////////////////
+      socket.on('my_response', function(msg) {
+          $('#log').html('<br>Received: ' + msg.data);
+      });
+      $('form#disconnect').submit(function(event) {
+          socket.emit('disconnect_request');
+          return false;
+      });
+  });
 </script>
 {% endblock %}
 
 {% block body %}
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<!-- Or if you want a more recent canary version -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/hls.js@canary"></script> -->
-<video id="video" width="320" height="240" controls></video>
+<div class="container">
+  <div class="row justify-content-md-center">
+    <div class="col-md-auto">
+
+      <h1>Firewatch</h1>
+      <video id="video" controls></video>
+      <h2>Receive:</h2>
+      <div><p id="log"></p></div>
+
+    </div>
+  </div>
+</div>
+
 <script>
   var video = document.getElementById('video');
   if(Hls.isSupported()) {
     var hls = new Hls();
     hls.loadSource('http://192.168.1.131:8080/camera/livestream.m3u8');
-    // hls.loadSource('http://localhost:4000');
+    // hls.loadSource('http://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8');
     hls.attachMedia(video);
     hls.on(Hls.Events.MANIFEST_PARSED,function() {
       // video.play();
   });
  }
- // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.
- // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element throught the `src` property.
- // This is using the built-in support of the plain video element, without using hls.js.
- // Note: it would be more normal to wait on the 'canplay' event below however on Safari (where you are most likely to find built-in HLS support) the video.src URL must be on the user-driven
- // white-list before a 'canplay' event will be emitted; the last video event that can be reliably listened-for when the URL is not on the white-list is 'loadedmetadata'.
   else if (video.canPlayType('application/vnd.apple.mpegurl')) {
     video.src = 'http://192.168.1.131:8080/camera/livestream.m3u8';
-    // video.src = 'http://localhost:4000';
+    // video.src = 'http://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8';
     video.addEventListener('loadedmetadata',function() {
       // video.play();
     });
   }
-  // $("id#video").attr("width","320", "height","240")
 </script>
-<h2 id="label"> </h2>
-<script type=text/javascript>
-  $(function() {
-    while (true) {
-    // $('h2#label').bind('click', function() {
-      $.getJSON($SCRIPT_ROOT + '/status', {
-      }, function(data) {
-        $("h2#label").text(data);
-        console.log(data)
-      });
-      return false;
-    // });
-    }
-  });
-</script>
-
-<script>
-  function httpGetAsync(theUrl, callback)
-  {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-            callback(xmlHttp.responseText);
-    }
-    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
-    xmlHttp.send(null);
-  }
-
-  // var label = document.getElementById('label');
-
-  // while (true){
-  //   setTimeout(() => {  httpGetAsync('http://localhost:5000/status',function(text){
-  //     // console.log(text)
-  //     document.getElementById('label').innerHTML=text
-  //     }) }, 3000);
-    
-  //   }
-
-</script>
-
 
 
 {% endblock %}
