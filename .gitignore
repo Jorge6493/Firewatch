@@ -13,3 +13,5 @@ fire-old/valid/fire/*
 fire-old/valid/no-fire/*
 
 fire/datasetviejo/*
+
+.vscode/*
