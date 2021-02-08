@@ -25,7 +25,7 @@ train_generator = training_datagen.flow_from_directory(train_path, target_size=(
 
 validation_generator = validation_datagen.flow_from_directory(valid_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', shuffle = True, batch_size= 14)
 
-test_generator = ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', shuffle=False, batch_size=10)
+test_generator = ImageDataGenerator(rescale=1./255).flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', shuffle=False, batch_size=10)
 testSteps = test_generator.n/8
 
 input_tensor = Input(shape=(224, 224, 3))
