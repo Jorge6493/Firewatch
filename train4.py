@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Activation, Dense, Flatten, Conv2D, MaxPool2D
+from tensorflow.keras.layers import Activation, Dense, Flatten, Conv2D, MaxPool2D, Input, GlobalAveragePooling2D, Dropout
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import categorical_crossentropy
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -16,17 +16,25 @@ import matplotlib.pyplot as plt
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+from tensorflow.keras.applications.inception_v3 import InceptionV3
+from tensorflow.keras.models import Model
+
 # workon keras_tflow
 
 train_path = 'fire/train'
 valid_path = 'fire/valid'
-test_path = 'fire/test'
+# test_path = 'fire/test'
 
 batchSize = 10
 
-train_batches = ImageDataGenerator().flow_from_directory(directory=train_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size= batchSize, shuffle=True)
-valid_batches = ImageDataGenerator().flow_from_directory(directory=valid_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=True)
-test_batches = ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=False)
+# train_batches = ImageDataGenerator().flow_from_directory(directory=train_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size= batchSize, shuffle=True)
+training_datagen = ImageDataGenerator(rescale=1./255, zoom_range=0.15, horizontal_flip=True, fill_mode='nearest')
+train_generator = training_datagen.flow_from_directory(train_path, target_size=(224,224), color_mode="grayscale",classes=['fire', 'no-fire'], class_mode='categorical', shuffle = True, batch_size = batchSize)
+
+# valid_batches = ImageDataGenerator().flow_from_directory(directory=valid_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=True)
+validation_datagen = ImageDataGenerator(rescale = 1./255)
+validation_generator = validation_datagen.flow_from_directory(valid_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], class_mode='categorical', shuffle = True, batch_size= batchSize)
+# test_batches = ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=False)
 
 # assert train_batches.n == 780*2
 # assert valid_batches.n == 220*2
@@ -37,11 +45,11 @@ test_batches = ImageDataGenerator().flow_from_directory(directory=test_path, tar
 # print('Valid Batches = '+valid_batches.n)
 # print('Test Batches = '+test_batches.n)
 
-stepsPerEpoch = train_batches.n/batchSize
-validationSteps = valid_batches.n/batchSize
-testSteps = test_batches.n/batchSize
+stepsPerEpoch = train_generator.n/batchSize
+validationSteps = validation_generator.n/batchSize
+# testSteps = test_batches.n/batchSize
 
-imgs, labels = next(train_batches)
+imgs, labels = next(train_generator)
 
 # This function will plot images in the form of a grid with 1 row and 10 columns where images are placed in each column.
 def plotImages(images_arr):
@@ -56,28 +64,33 @@ def plotImages(images_arr):
 # print(labels)
 # plotImages(imgs)
 
-model = Sequential([
-		Conv2D(filters=64, kernel_size=(3, 3), activation='relu', padding = 'same', input_shape=(224,224,1)),
-		MaxPool2D(pool_size=(2,2), strides=2),
-		Conv2D(filters=128, kernel_size=(3, 3), activation='relu', padding = 'same'),
-		MaxPool2D(pool_size=(2,2), strides=2),
-		Flatten(),
-		Dense(units=2, activation='softmax'),
-])
+# model = Sequential([
+# 		Conv2D(filters=64, kernel_size=(3, 3), activation='relu', padding = 'same', input_shape=(224,224,1)),
+# 		MaxPool2D(pool_size=(2,2), strides=2),
+# 		Conv2D(filters=128, kernel_size=(3, 3), activation='relu', padding = 'same'),
+# 		MaxPool2D(pool_size=(2,2), strides=2),
+# 		Flatten(),
+# 		Dense(units=2, activation='softmax'),
+# ])
+
+input_tensor = Input(shape=(224, 224, 1))
+base_model = InceptionV3(input_tensor=input_tensor, weights='imagenet', include_top=False)
+
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+x = Dense(2048, activation='relu')(x)
+x = Dropout(0.25)(x)
+x = Dense(1024, activation='relu')(x)
+x = Dropout(0.2)(x)
+predictions = Dense(2, activation='softmax')(x)
+
+model = Model(inputs=base_model.input, outputs=predictions)
 
 model.summary()
 
 model.compile(optimizer=Adam(learning_rate=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 model.fit(x=train_batches, validation_data=valid_batches, epochs=20, verbose=2, steps_per_epoch=stepsPerEpoch, validation_steps=validationSteps)
-
-model_json = model.to_json()
-with open("modeltrain1.json", "w") as json_file:
-	json_file.write(model_json)
-
-model.save_weights("modeltrain1.h5")
-print("Saved model.")
-
 
 # test_imgs, test_labels = next(test_batches)
 # plotImages(test_imgs)
@@ -134,4 +147,3 @@ test_batches.class_indices
 
 cm_plot_labels = ['fire', 'no-fire']
 plot_confusion_matrix(cm = cm, classes = cm_plot_labels, title = 'Confusion Matrix')
-

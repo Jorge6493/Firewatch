@@ -1,17 +1,4 @@
-fire/test/fire/*
-fire/test/no-fire/*
-fire/train/fire/*
-fire/train/no-fire/*
-fire/valid/fire/*
-fire/valid/no-fire/*
-
-fire-old/test/fire/*
-fire-old/test/no-fire/*
-fire-old/train/fire/*
-fire-old/train/no-fire/*
-fire-old/valid/fire/*
-fire-old/valid/no-fire/*
-
-fire/datasetviejo/*
+fire/*
+fire-old/*
 
 .vscode/*
