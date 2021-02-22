@@ -1,10 +1,10 @@
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Activation, Dense, Flatten, Conv2D, MaxPool2D
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Activation, Dense, Flatten, Conv2D, MaxPool2D, GlobalAveragePooling2D, Input, Dropout
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import categorical_crossentropy
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.preprocessing import image
 from sklearn.metrics import confusion_matrix
 import numpy as np
 import itertools
@@ -16,6 +16,10 @@ import matplotlib.pyplot as plt
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+from tensorflow.keras.applications.inception_v3 import InceptionV3
+
+
+
 # workon keras_tflow
 
 train_path = 'fire/train'
@@ -24,9 +28,9 @@ test_path = 'fire/test'
 
 batchSize = 10
 
-train_batches = ImageDataGenerator().flow_from_directory(directory=train_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size= batchSize, shuffle=True)
-valid_batches = ImageDataGenerator().flow_from_directory(directory=valid_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=True)
-test_batches = ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=False)
+train_batches = image.ImageDataGenerator().flow_from_directory(directory=train_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size= batchSize, shuffle=True)
+valid_batches = image.ImageDataGenerator().flow_from_directory(directory=valid_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=True)
+test_batches = image.ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=False)
 
 # assert train_batches.n == 780*2
 # assert valid_batches.n == 220*2
@@ -56,14 +60,32 @@ def plotImages(images_arr):
 # print(labels)
 # plotImages(imgs)
 
-model = Sequential([
-		Conv2D(filters=64, kernel_size=(3, 3), activation='relu', padding = 'same', input_shape=(224,224,1)),
-		MaxPool2D(pool_size=(2,2), strides=2),
-		Conv2D(filters=128, kernel_size=(3, 3), activation='relu', padding = 'same'),
-		MaxPool2D(pool_size=(2,2), strides=2),
-		Flatten(),
-		Dense(units=2, activation='softmax'),
-])
+#original
+# model = Sequential([
+# 		Conv2D(filters=64, kernel_size=(3, 3), activation='relu', padding = 'same', input_shape=(224,224,1)),
+# 		MaxPool2D(pool_size=(2,2), strides=2),
+# 		Conv2D(filters=128, kernel_size=(3, 3), activation='relu', padding = 'same'),
+# 		MaxPool2D(pool_size=(2,2), strides=2),
+# 		Flatten(),
+# 		Dense(units=2, activation='softmax'),
+# ])
+
+#incelption
+input_tensor = Input(shape=(224, 224, 3))
+base_model = InceptionV3(input_tensor=input_tensor, weights='imagenet', include_top=False)
+
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+x = Dense(2048, activation='relu')(x)
+x = Dropout(0.25)(x)
+x = Dense(1024, activation='relu')(x)
+x = Dropout(0.2)(x)
+predictions = Dense(2, activation='softmax')(x)
+
+model = Model(inputs=base_model.input, outputs=predictions)
+
+for layer in base_model.layers:
+  layer.trainable = False
 
 model.summary()
 
@@ -71,12 +93,14 @@ model.compile(optimizer=Adam(learning_rate=0.0001), loss='categorical_crossentro
 
 model.fit(x=train_batches, validation_data=valid_batches, epochs=20, verbose=2, steps_per_epoch=stepsPerEpoch, validation_steps=validationSteps)
 
-model_json = model.to_json()
-with open("modeltrain1.json", "w") as json_file:
-	json_file.write(model_json)
+# model_json = model.to_json()
+# with open("modeltrain1.json", "w") as json_file:
+# 	json_file.write(model_json)
 
-model.save_weights("modeltrain1.h5")
+# model.save_weights("modeltrain1.h5")
+model.save("models/modeltrain1IV3")
 print("Saved model.")
+
 
 
 # test_imgs, test_labels = next(test_batches)

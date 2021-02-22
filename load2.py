@@ -1,28 +1,34 @@
 import tensorflow as tf
 from tensorflow import keras
-from keras.models import model_from_json
+from keras.models import model_from_json, load_model
 import numpy as np
 import pathlib
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.preprocessing import image
 import itertools
 
 test_path = 'fire/test'
 
-test_datagen = ImageDataGenerator(rescale = 1./255)
-# test_batches = test_datagen.flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', batch_size= 8)
-test_batches = test_datagen.flow_from_directory(directory=test_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], class_mode='categorical', batch_size= 8)
+batchSize = 10
 
-testSteps = test_batches.n/8
+## test_datagen = ImageDataGenerator(rescale = 1./255)
+# test_batches = test_datagen.flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', batch_size= 8)
+## test_batches = test_datagen.flow_from_directory(directory=test_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], class_mode='categorical', batch_size= 8)
+
+test_batches = image.ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=False)
+
+
+testSteps = test_batches.n/batchSize
 
 #load .json and create model
-json_file = open('modeltrain1.json', 'r')
-loaded_model_json = json_file.read()
-json_file.close()
-loaded_model = model_from_json(loaded_model_json)
+# json_file = open('modeltrain1.json', 'r')
+# loaded_model_json = json_file.read()
+# json_file.close()
+# loaded_model = model_from_json(loaded_model_json)
 
-loaded_model.load_weights("modeltrain1.h5")
+# loaded_model.load_weights("modeltrain1.h5")
+loaded_model = load_model("models/modeltrain1IV3")
 print("Loaded model.")
 
 # sunflower_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/592px-Red_sunflower.jpg"
