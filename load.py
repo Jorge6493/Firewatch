@@ -1,26 +1,27 @@
 import tensorflow as tf
 from tensorflow import keras
-from keras.models import model_from_json
+from keras.models import model_from_json, load_model
 import numpy as np
 import pathlib
 
 
 
 #load .json and create model
-json_file = open('model.json', 'r')
-loaded_model_json = json_file.read()
-json_file.close()
-loaded_model = model_from_json(loaded_model_json)
+# json_file = open('model.json', 'r')
+# loaded_model_json = json_file.read()
+# json_file.close()
+# loaded_model = model_from_json(loaded_model_json)
 
-loaded_model.load_weights("model.h5")
+# loaded_model.load_weights("model.h5")
+loaded_model = load_model("models/modeltrain1IV3")
 print("Loaded model.")
 
 # sunflower_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/592px-Red_sunflower.jpg"
 # sunflower_path = tf.keras.utils.get_file('Red_sunflower', origin=sunflower_url)
-img_path_url = "/home/jorge/keras_tf/Firewatch/prueba2.jpg"
+img_path_url = "/home/jorge/keras_tf/Firewatch/testtest.jpg"
 url = pathlib.Path(img_path_url).as_uri()
 
-path = tf.keras.utils.get_file('prueba2',origin=url)
+path = tf.keras.utils.get_file('testtest',origin=url)
 img_height = 224
 img_width = 224
 

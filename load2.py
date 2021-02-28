@@ -8,9 +8,9 @@ from sklearn.metrics import confusion_matrix
 from tensorflow.keras.preprocessing import image
 import itertools
 
-test_path = 'fire/test'
+test_path = 'fire/testNOtrain2'
 
-batchSize = 10
+batchSize = 5
 
 ## test_datagen = ImageDataGenerator(rescale = 1./255)
 # test_batches = test_datagen.flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', batch_size= 8)

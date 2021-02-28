@@ -2,7 +2,7 @@ import cv2
 import sys
 import tensorflow as tf
 from tensorflow import keras
-from keras.models import model_from_json
+from keras.models import model_from_json, load_model
 import numpy as np
 import pathlib
 # import keyboard
@@ -89,13 +89,14 @@ def disconnect(sid):
 
 if __name__ == "__main__":
 
-    #load .json and create model
-    json_file = open('model.json', 'r')
-    loaded_model_json = json_file.read()
-    json_file.close()
-    loaded_model = model_from_json(loaded_model_json)
+    # load .json and create model
+    # json_file = open('model.json', 'r')
+    # loaded_model_json = json_file.read()
+    # json_file.close()
+    # loaded_model = model_from_json(loaded_model_json)
 
-    loaded_model.load_weights("model.h5")
+    # loaded_model.load_weights("model.h5")
+    loaded_model = load_model("models/modeltrain1IV3")
     print("Loaded model.")
 
     VIDEO_URL = "http://192.168.1.131:8080/camera/livestream.m3u8"
