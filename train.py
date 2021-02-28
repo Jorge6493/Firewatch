@@ -28,9 +28,9 @@ test_path = 'fire/test'
 
 batchSize = 10
 
-train_batches = image.ImageDataGenerator().flow_from_directory(directory=train_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size= batchSize, shuffle=True)
-valid_batches = image.ImageDataGenerator().flow_from_directory(directory=valid_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=True)
-test_batches = image.ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=False)
+train_batches = image.ImageDataGenerator().flow_from_directory(directory=train_path, target_size=(224,224), classes=['fire', 'no-fire'], batch_size= batchSize, shuffle=True)
+valid_batches = image.ImageDataGenerator().flow_from_directory(directory=valid_path, target_size=(224,224), classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=True)
+test_batches = image.ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=False)
 
 # assert train_batches.n == 780*2
 # assert valid_batches.n == 220*2

@@ -16,7 +16,7 @@ batchSize = 10
 # test_batches = test_datagen.flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], class_mode='categorical', batch_size= 8)
 ## test_batches = test_datagen.flow_from_directory(directory=test_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], class_mode='categorical', batch_size= 8)
 
-test_batches = image.ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), color_mode="grayscale", classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=False)
+test_batches = image.ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=False)
 
 
 testSteps = test_batches.n/batchSize
