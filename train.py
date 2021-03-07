@@ -32,6 +32,8 @@ train_batches = image.ImageDataGenerator().flow_from_directory(directory=train_p
 valid_batches = image.ImageDataGenerator().flow_from_directory(directory=valid_path, target_size=(224,224), classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=True)
 test_batches = image.ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=False)
 
+
+
 # assert train_batches.n == 780*2
 # assert valid_batches.n == 220*2
 # assert test_batches.n == 110*2
