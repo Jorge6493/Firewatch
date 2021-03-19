@@ -32,7 +32,11 @@ train_batches = image.ImageDataGenerator().flow_from_directory(directory=train_p
 valid_batches = image.ImageDataGenerator().flow_from_directory(directory=valid_path, target_size=(224,224), classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=True)
 test_batches = image.ImageDataGenerator().flow_from_directory(directory=test_path, target_size=(224,224), classes=['fire', 'no-fire'], batch_size=batchSize, shuffle=False)
 
-
+for _ in range(5):
+    img, label = test_batches.next()
+    print(img.shape)   #  (1,256,256,3)
+    plt.imshow(img[0])
+    plt.show()
 
 # assert train_batches.n == 780*2
 # assert valid_batches.n == 220*2

@@ -32,33 +32,47 @@ thread = None
 def background_thread():
     """Example of how to send server generated events to clients."""
     count = 0
+    count2 = 0
+    img_height = 224
+    img_width = 224
+    class_names = ['fire', 'no-fire']
+
+
     while True:
         # read one frame
         ret, frame = cap.read()
+        if ret:
+            # cv2.imwrite('frame{:d}.jpg'.format(count), frame)
+            count2 += wait_ms*2 # i.e. at 30 fps, this advances one second
+            cap.set(1, count2)
+    
+            frame = cv2.resize(frame, (img_height, img_width))
 
-        # TODO: perform frame processing here
-        img_height = 224
-        img_width = 224
-        frame = cv2.resize(frame, (img_height, img_width))
-        # frame = cv2.flip(frame,0) 
-        # img = keras.preprocessing.image.load_img(
-        # frame, target_size=(img_height, img_width)
-        # )
-        img_array = keras.preprocessing.image.img_to_array(frame)
-        img_array = tf.expand_dims(img_array, 0) # Create a batch
+            # TODO: perform frame processing here
 
-        predictions = loaded_model.predict(img_array)
-        score = tf.nn.softmax(predictions[0])
+            img_array = keras.preprocessing.image.img_to_array(frame)
+            # Create a batch
+            img_array = np.array([img_array])
 
-        class_names = ['fire', 'no-fire']
-        
-        label = class_names[np.argmax(score)]
-        
-        sio.sleep(2)
-        count += 1
-        # sio.emit('my_response', {'data': 'Server generated event'})
-        sio.emit('my_response', {'data': label + " " + str(count)})
-        label = "none"
+
+            # display frame
+            cv2.imshow('frame interpretado',img_array[0])
+            cv2.imshow('frame real',frame)
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+            predictions = loaded_model.predict(img_array)
+            score = tf.nn.softmax(predictions[0])
+
+            label = class_names[np.argmax(score)]
+            
+            sio.sleep(2)
+            count += 1
+            # sio.emit('my_response', {'data': 'Server generated event'})
+            sio.emit('my_response', {'data': label + " " + str(count)})
+            print(label + " " + str(count))
+            label = "none"
         
 
 
@@ -99,8 +113,10 @@ if __name__ == "__main__":
     loaded_model = load_model("models/modeltrain1IV3")
     print("Loaded model.")
 
-    VIDEO_URL = "http://192.168.1.131:8080/camera/livestream.m3u8"
+    # VIDEO_URL = "http://192.168.1.131:8080/camera/livestream.m3u8"
     # VIDEO_URL = "http://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
+    VIDEO_URL = "https://media.publit.io/file/h_720/input.mp4"
+    # VIDEO_URL = './input.mp4'
 
 
     cap = cv2.VideoCapture(VIDEO_URL)

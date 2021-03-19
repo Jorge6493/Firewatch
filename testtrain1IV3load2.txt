@@ -1,0 +1,33 @@
+Found 28 images belonging to 2 classes.
+Loaded model.
+This image most likely belongs to fire with a 66.90 percent confidence.
+This image most likely belongs to fire with a 70.96 percent confidence.
+This image most likely belongs to fire with a 64.65 percent confidence.
+This image most likely belongs to fire with a 72.15 percent confidence.
+This image most likely belongs to fire with a 72.79 percent confidence.
+This image most likely belongs to fire with a 56.68 percent confidence.
+This image most likely belongs to fire with a 72.69 percent confidence.
+This image most likely belongs to fire with a 66.73 percent confidence.
+This image most likely belongs to fire with a 72.95 percent confidence.
+This image most likely belongs to fire with a 69.60 percent confidence.
+This image most likely belongs to fire with a 54.14 percent confidence.
+This image most likely belongs to no-fire with a 60.79 percent confidence.
+This image most likely belongs to fire with a 67.64 percent confidence.
+This image most likely belongs to fire with a 62.77 percent confidence.
+This image most likely belongs to no-fire with a 73.10 percent confidence.
+This image most likely belongs to no-fire with a 71.63 percent confidence.
+This image most likely belongs to no-fire with a 73.08 percent confidence.
+This image most likely belongs to no-fire with a 73.07 percent confidence.
+This image most likely belongs to no-fire with a 73.09 percent confidence.
+This image most likely belongs to no-fire with a 73.00 percent confidence.
+This image most likely belongs to no-fire with a 68.80 percent confidence.
+This image most likely belongs to no-fire with a 73.00 percent confidence.
+This image most likely belongs to no-fire with a 59.06 percent confidence.
+This image most likely belongs to no-fire with a 73.10 percent confidence.
+This image most likely belongs to no-fire with a 71.39 percent confidence.
+This image most likely belongs to fire with a 53.28 percent confidence.
+This image most likely belongs to no-fire with a 67.30 percent confidence.
+This image most likely belongs to no-fire with a 73.04 percent confidence.
+Confusion matrix, without normalization
+[[13  1]
+ [ 1 13]]

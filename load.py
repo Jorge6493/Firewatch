@@ -3,6 +3,7 @@ from tensorflow import keras
 from keras.models import model_from_json, load_model
 import numpy as np
 import pathlib
+import cv2
 
 
 
@@ -13,15 +14,16 @@ import pathlib
 # loaded_model = model_from_json(loaded_model_json)
 
 # loaded_model.load_weights("model.h5")
+
 loaded_model = load_model("models/modeltrain1IV3")
 print("Loaded model.")
 
 # sunflower_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/592px-Red_sunflower.jpg"
 # sunflower_path = tf.keras.utils.get_file('Red_sunflower', origin=sunflower_url)
-img_path_url = "/home/jorge/keras_tf/Firewatch/testtest.jpg"
+img_path_url = "/home/jorge/keras_tf/Firewatch/fire-(1414).png"
 url = pathlib.Path(img_path_url).as_uri()
 
-path = tf.keras.utils.get_file('testtest',origin=url)
+path = tf.keras.utils.get_file('fire-(1414)',origin=url)
 img_height = 224
 img_width = 224
 
@@ -29,7 +31,12 @@ img = keras.preprocessing.image.load_img(
     path, target_size=(img_height, img_width)
 )
 img_array = keras.preprocessing.image.img_to_array(img)
-img_array = tf.expand_dims(img_array, 0) # Create a batch
+# img_array = tf.expand_dims(img_array, 0) # Create a batch
+img_array = np.array([img_array])
+while(True):
+    cv2.imshow('frame',img_array[0])
+    if cv2.waitKey(int(1000/30)) & 0xFF == ord('q'):
+        break
 
 predictions = loaded_model.predict(img_array)
 score = tf.nn.softmax(predictions[0])
