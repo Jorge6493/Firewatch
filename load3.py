@@ -6,11 +6,12 @@ import pathlib
 import cv2
 
 
-loaded_model = load_model("models/modeltrain1IV3")
-print("Loaded model.")
+# loaded_model = load_model("models/modeltrain1IV3")
+# print("Loaded model.")
 
-VIDEO_URL = './input.mp4'
-cap = cv2.VideoCapture(VIDEO_URL)
+# VIDEO_URL = './input.mp4'
+# cap = cv2.VideoCapture(VIDEO_URL)
+cap = cv2.VideoCapture(0)
 if (cap.isOpened() == False):
     print('!!! Unable to open URL')
     sys.exit(-1)
@@ -34,8 +35,11 @@ while(cap.isOpened()):
         ret, frame = cap.read()
         if ret:
             # cv2.imwrite('frame{:d}.jpg'.format(count), frame)
-            count += 4 # i.e. at 30 fps, this advances one second
-            cap.set(1, count)
+            # count += fps # i.e. at 30 fps, this advances one second
+            # cap.set(1, count)
+
+            # follow link to do more
+            # https://stackoverflow.com/questions/43665208/how-to-get-the-latest-frame-from-capture-device-camera-in-opencv
     
             frame = cv2.resize(frame, (img_height, img_width))
 
@@ -47,18 +51,21 @@ while(cap.isOpened()):
 
 
             # display frame
-            cv2.imshow('frame',img_array[0])
+            cv2.imshow('interpreted frame',img_array[0])
+            cv2.imshow('real frame',frame)
 
             if cv2.waitKey(wait_ms) & 0xFF == ord('q'):
                 break
 
-            predictions = loaded_model.predict(img_array)
-            score = tf.nn.softmax(predictions[0])
+            # predictions = loaded_model.predict(img_array)
+            # score = tf.nn.softmax(predictions[0])
 
-            print(
-                "This image most likely belongs to {}"
-                .format(class_names[np.argmax(score)])
-            )
+            # print(
+            #     "This image most likely belongs to {}"
+            #     .format(class_names[np.argmax(score)])
+            # )
+        else:
+            break
         
 
     #     frameskip = True
