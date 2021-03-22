@@ -18,6 +18,33 @@ import socketio
 from flask import Flask, render_template, url_for, request, redirect, jsonify
 from flask_cors import CORS
 
+import queue, threading
+
+class VideoCapture:
+
+  def __init__(self, name):
+    self.cap = cv2.VideoCapture(name)
+    self.q = queue.Queue()
+    t = threading.Thread(target=self._reader)
+    t.daemon = True
+    t.start()
+
+  # read frames as soon as they are available, keeping only most recent one
+  def _reader(self):
+    while True:
+      ret, frame = self.cap.read()
+      if not ret:
+        break
+      if not self.q.empty():
+        try:
+          self.q.get_nowait()   # discard previous (unprocessed) frame
+        except queue.Empty:
+          pass
+      self.q.put(frame)
+
+  def read(self):
+    return self.q.get()
+
 sio = socketio.Server(logger=True, async_mode=async_mode)
 
 app = Flask(__name__)
@@ -40,11 +67,11 @@ def background_thread():
 
     while True:
         # read one frame
-        ret, frame = cap.read()
-        if ret:
+        frame = cap.read()
+        if True:
             # cv2.imwrite('frame{:d}.jpg'.format(count), frame)
-            count2 += wait_ms*2 # i.e. at 30 fps, this advances one second
-            cap.set(1, count2)
+            # count2 += wait_ms*2 # i.e. at 30 fps, this advances one second
+            # cap.set(1, count2)
     
             frame = cv2.resize(frame, (img_height, img_width))
 
@@ -59,7 +86,7 @@ def background_thread():
             cv2.imshow('frame interpretado',img_array[0])
             cv2.imshow('frame real',frame)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            if cv2.waitKey(wait_ms) & 0xFF == ord('q'):
                 break
 
             predictions = loaded_model.predict(img_array)
@@ -81,6 +108,7 @@ def index():
     global thread
     if thread is None:
         thread = sio.start_background_task(background_thread)
+
     return render_template('index.html')
 
 @sio.event
@@ -119,13 +147,13 @@ if __name__ == "__main__":
     # VIDEO_URL = './input.mp4'
 
 
-    cap = cv2.VideoCapture(VIDEO_URL)
-    if (cap.isOpened() == False):
+    cap = VideoCapture(VIDEO_URL)
+    if (cap.cap.isOpened() == False):
         print('!!! Unable to open URL')
         sys.exit(-1)
 
     # retrieve FPS and calculate how long to wait between each frame to be display
-    fps = cap.get(cv2.CAP_PROP_FPS)
+    fps = cap.cap.get(cv2.CAP_PROP_FPS)
     wait_ms = int(1000/fps)
     print('FPS:', fps)
     # app.run(debug=True)
