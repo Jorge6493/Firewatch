@@ -74,7 +74,7 @@ def plotImages(images_arr):
 
 #incelption
 model = Sequential([
-		Conv2D(filters=64, kernel_size=(3, 3), activation='relu', padding = 'same', input_shape=(224,224,1)),
+		Conv2D(filters=64, kernel_size=(3, 3), activation='relu', padding = 'same', input_shape=(224,224,3)),
 		MaxPool2D(pool_size=(2,2), strides=2),
 		Conv2D(filters=128, kernel_size=(3, 3), activation='relu', padding = 'same'),
 		MaxPool2D(pool_size=(2,2), strides=2),
