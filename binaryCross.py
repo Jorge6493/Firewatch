@@ -82,9 +82,6 @@ model = Sequential([
 		Dense(units=1, activation='sigmoid'),
 ])
 
-for layer in base_model.layers:
-  layer.trainable = False
-
 model.summary()
 
 model.compile(optimizer=SGD(learning_rate=learning_rate), loss='binary_crossentropy', metrics=['accuracy'])
