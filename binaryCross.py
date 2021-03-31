@@ -18,7 +18,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from tensorflow.keras.applications.inception_v3 import InceptionV3
 
-learning_rate = 0.0001
+learning_rate = 0.1
 
 # workon keras_tflow
 
