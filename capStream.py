@@ -32,8 +32,8 @@ class VideoCapture:
     return self.q.get()
 
 
-# VIDEO_URL = "http://192.168.1.131:8080/camera/livestream.m3u8"
-VIDEO_URL = './input.mp4'
+VIDEO_URL = "http://192.168.1.131:8080/camera/livestream.m3u8"
+# VIDEO_URL = './input.mp4'
 
 
 cap = VideoCapture(0)
@@ -61,7 +61,7 @@ while(True):
     img_array = np.array([img_array])
 
     # display frame
-    # cv2.imshow('frame',img_array[0])
+    cv2.imshow('frame',img_array[0])
     cv2.imshow('frametrue',frame)
     if cv2.waitKey(wait_ms) & 0xFF == ord('q'):
         break

@@ -18,32 +18,32 @@ import socketio
 from flask import Flask, render_template, url_for, request, redirect, jsonify
 from flask_cors import CORS
 
-import queue, threading
+# import queue, threading
 
-class VideoCapture:
+# class VideoCapture:
 
-  def __init__(self, name):
-    self.cap = cv2.VideoCapture(name)
-    self.q = queue.Queue()
-    t = threading.Thread(target=self._reader)
-    t.daemon = True
-    t.start()
+#   def __init__(self, name):
+#     self.cap = cv2.VideoCapture(name)
+#     self.q = queue.Queue()
+#     t = threading.Thread(target=self._reader)
+#     t.daemon = True
+#     t.start()
 
-  # read frames as soon as they are available, keeping only most recent one
-  def _reader(self):
-    while True:
-      ret, frame = self.cap.read()
-      if not ret:
-        break
-      if not self.q.empty():
-        try:
-          self.q.get_nowait()   # discard previous (unprocessed) frame
-        except queue.Empty:
-          pass
-      self.q.put(frame)
+#   # read frames as soon as they are available, keeping only most recent one
+#   def _reader(self):
+#     while True:
+#       ret, frame = self.cap.read()
+#       if not ret:
+#         break
+#       if not self.q.empty():
+#         try:
+#           self.q.get_nowait()   # discard previous (unprocessed) frame
+#         except queue.Empty:
+#           pass
+#       self.q.put(frame)
 
-  def read(self):
-    return self.q.get()
+#   def read(self):
+#     return self.q.get()
 
 sio = socketio.Server(logger=True, async_mode=async_mode)
 
@@ -67,11 +67,13 @@ def background_thread():
 
     while True:
         # read one frame
-        frame = cap.read()
+        ret, frame = cap.read()
         if True:
             # cv2.imwrite('frame{:d}.jpg'.format(count), frame)
-            # count2 += wait_ms*2 # i.e. at 30 fps, this advances one second
-            # cap.set(1, count2)
+            count2 += int(fps*1.8)#*2 + 10 # i.e. at 30 fps, this advances one second
+            cap.set(1, count2)
+
+            # cvSetCaptureProperty(capture, CV_CAP_PROP_POS_FRAMES, frameIndex);
     
             frame = cv2.resize(frame, (img_height, img_width))
 
@@ -81,11 +83,9 @@ def background_thread():
             # Create a batch
             img_array = np.array([img_array])
 
-
             # display frame
             cv2.imshow('frame_interpretado',img_array[0])
             cv2.imshow('frame_real',frame)
-
 
 
             if cv2.waitKey(wait_ms) & 0xFF == ord('q'):
@@ -96,7 +96,7 @@ def background_thread():
 
             label = class_names[np.argmax(score)]
             
-            sio.sleep(2)
+            sio.sleep(1)
             count += 1
             # sio.emit('my_response', {'data': 'Server generated event'})
             # sio.emit('my_response', {'data': label + " " + str(count)})
@@ -112,7 +112,7 @@ def index():
     if thread is None:
         thread = sio.start_background_task(background_thread)
 
-    return render_template('index.html')
+    return render_template('indexVid.html')
 
 @sio.event
 def my_broadcast_event(sid, message):
@@ -146,17 +146,18 @@ if __name__ == "__main__":
 
     # VIDEO_URL = "http://192.168.1.131:8080/camera/livestream.m3u8"
     # VIDEO_URL = "http://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-    VIDEO_URL = "https://media.publit.io/file/h_720/input.mp4"
+    VIDEO_URL = "https://media.publit.io/file/h_720/input2.mp4"
+    # VIDEO_URL = "https://media.publit.io/file/h_720/pruebarepdom2.mp4"
     # VIDEO_URL = './input.mp4'
 
 
-    cap = VideoCapture(VIDEO_URL)
-    if (cap.cap.isOpened() == False):
+    cap = cv2.VideoCapture(VIDEO_URL)
+    if (cap.isOpened() == False):
         print('!!! Unable to open URL')
         sys.exit(-1)
 
     # retrieve FPS and calculate how long to wait between each frame to be display
-    fps = cap.cap.get(cv2.CAP_PROP_FPS)
+    fps = cap.get(cv2.CAP_PROP_FPS)
     wait_ms = int(1000/fps)
     print('FPS:', fps)
     # app.run(debug=True)

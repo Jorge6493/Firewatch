@@ -100,7 +100,7 @@ model.fit(x=train_batches, validation_data=valid_batches, epochs=20, verbose=2, 
 # 	json_file.write(model_json)
 
 # model.save_weights("modeltrain1.h5")
-model.save("models/test_sgd/modeltrain1IV3-0.0001")
+model.save("models/test_binaryCross/modeltrain1IV3-binarCross")
 print("Saved model.")
 
 
