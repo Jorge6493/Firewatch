@@ -83,8 +83,8 @@ def background_thread():
 
 
             # display frame
-            cv2.imshow('frame_interpretado',img_array[0])
-            cv2.imshow('frame_real',frame)
+            # cv2.imshow('frame_interpretado',img_array[0])
+            # cv2.imshow('frame_real',frame)
 
 
 

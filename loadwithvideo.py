@@ -84,8 +84,8 @@ def background_thread():
             img_array = np.array([img_array])
 
             # display frame
-            cv2.imshow('frame_interpretado',img_array[0])
-            cv2.imshow('frame_real',frame)
+            # cv2.imshow('frame_interpretado',img_array[0])
+            # cv2.imshow('frame_real',frame)
 
 
             if cv2.waitKey(wait_ms) & 0xFF == ord('q'):
