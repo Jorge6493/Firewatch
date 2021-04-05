@@ -144,9 +144,9 @@ if __name__ == "__main__":
     loaded_model = load_model("models/modeltrain1IV3")
     print("Loaded model.")
 
-    # VIDEO_URL = "http://192.168.1.131:8080/camera/livestream.m3u8"
+    VIDEO_URL = "http://192.168.1.131:8080/camera/livestream.m3u8"
     # VIDEO_URL = "http://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-    VIDEO_URL = "https://media.publit.io/file/h_720/input.mp4"
+    # VIDEO_URL = "https://media.publit.io/file/h_720/input.mp4"
     # VIDEO_URL = './input.mp4'
 
 
